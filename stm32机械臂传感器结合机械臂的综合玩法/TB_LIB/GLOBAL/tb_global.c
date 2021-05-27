@@ -1,0 +1,46 @@
+#include "tb_global.h"
+
+u32 systick_ms;
+duoji_t duoji_doing[DJ_NUM];
+u8 cmd_return[CMD_RETURN_SIZE];
+u8 uart_receive_buf[UART_BUF_SIZE], uart1_get_ok, uart1_mode;
+eeprom_info_t eeprom_info;
+
+
+
+void tb_global_init(void) {
+	u8 i;
+	//舵机控制初始化
+	for(i=0;i<DJ_NUM;i++) {
+		duoji_doing[i].aim = 1500;
+		duoji_doing[i].cur = 1500;
+		duoji_doing[i].inc = 0;
+	}
+	systick_ms = 0;
+	return;
+}
+
+
+uint16_t str_contain_str(unsigned char *str, unsigned char *str2) {
+	unsigned char *str_temp, *str_temp2;
+	str_temp = str;
+	str_temp2 = str2;
+	while(*str_temp) {
+		if(*str_temp == *str_temp2) {
+			while(*str_temp2) {
+				if(*str_temp++ != *str_temp2++) {
+					str_temp = str_temp - (str_temp2-str2) + 1;
+					str_temp2 = str2;
+					break;
+				}	
+			}
+			if(!*str_temp2) {
+				return (str_temp-str);
+			}
+			
+		} else {
+			str_temp++;
+		}
+	}
+	return 0;
+}
